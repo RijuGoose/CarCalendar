@@ -16,6 +16,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,13 +35,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    String calendarName = "Car Calendar";
-    String calendarDisplayName = "Car Calendar DP";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,18 @@ public class MainActivity extends AppCompatActivity {
 //        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 //
 //        startActivityForResult(signInIntent, 1);
+
+        Button startbtn = (Button)this.findViewById(R.id.startbtn);
+        TextView starttime = (TextView)this.findViewById(R.id.starttime);
+
+        startbtn.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                Calendar time = Calendar.getInstance();
+                time.setTime(new Date());
+                time.set(Calendar.HOUR_OF_DAY, time.get(Calendar.HOUR_OF_DAY) + 1);
+
+            }
+        });
 
         int permCalendar = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_CALENDAR);
 
@@ -73,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             time.setTime(new Date());
             startMillis = time.getTimeInMillis();
             time.set(Calendar.HOUR_OF_DAY, time.get(Calendar.HOUR_OF_DAY) + 1);
+
             endMillis = time.getTimeInMillis();
 
             ContentResolver cr = getContentResolver();
@@ -85,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "America/Los_Angeles");
             values.put(CalendarContract.Events.EVENT_LOCATION, "New York City");
 
-            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+            //Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
 
 //_-------------------
