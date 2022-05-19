@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +55,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    CarDataSettings settings = new CarDataSettings();
     long startMillis = 0;
     long endMillis = 0;
 
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 //        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 //
 //        startActivityForResult(signInIntent, 1);
+
+        SaveCarDataJson(settings);
 
         TextView starttime = (TextView) this.findViewById(R.id.starttime);
 
@@ -144,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         starttime.setText(datestring);
 
         startMillis = time.getTimeInMillis();
+        settings.setStartMillis(time.getTimeInMillis());
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -191,33 +196,30 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
-    public void AddEndTime(View v)
+    private void SaveCarDataJson(CarDataSettings set)
     {
-        File file = new File(getFilesDir(), "cardata.json");
-        FileReader fileReader = null;
+
+        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(set);
         try {
-            fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            StringBuilder stringBuilder = new StringBuilder();
-            String line = bufferedReader.readLine();
-            while (line != null){
-                stringBuilder.append(line).append("\n");
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
+            jsonObject.put("starttime", startMillis);
 
-            String response = stringBuilder.toString();
-
-            JSONObject jsonObject  = new JSONObject(response);
-            jsonObject.get("starttime").toString();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+            String userString = jsonObject.toString();
+// Define the File Path and its Name
+            File file = new File(getFilesDir(), "cardata.json");
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(userString);
+            bufferedWriter.close();
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public void AddEndTime(View v)
+    {
         TextView endtime = (TextView)this.findViewById(R.id.endtime);
         Calendar time = Calendar.getInstance();
         time.setTime(new Date());
@@ -249,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
             ContentResolver cr = getContentResolver();
             ContentValues values = new ContentValues();
-            values.put(CalendarContract.Events.DTSTART, startMillis);
+            values.put(CalendarContract.Events.DTSTART, Long.parseLong(getCarDataJson("starttime")));
             values.put(CalendarContract.Events.DTEND, endMillis);
             values.put(CalendarContract.Events.TITLE, "Autó használat");
             //values.put(CalendarContract.Events.DESCRIPTION, "Description to the example event");
@@ -288,5 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void SaveConfig(View view)
     {
+        ListMyCalendars(); //külön gombra elérhető naptárak megjelenítése ?
+        //kéne egy objektum, ami tárolja az összes elmentendő adatot
     }
 }
