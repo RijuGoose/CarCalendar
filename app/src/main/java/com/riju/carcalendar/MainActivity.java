@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,13 +58,24 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     CarDataSettings settings = new CarDataSettings();
-    long startMillis = 0;
-    long endMillis = 0;
+
+    TextView starttime;
+    TextView endtime;
+    TextView calname;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        starttime = (TextView) this.findViewById(R.id.starttime);
+        endtime = (TextView) this.findViewById(R.id.endtime);
+        calname = (TextView) this.findViewById(R.id.calendarname);
 
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{ Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR}, 1);
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -73,16 +86,32 @@ public class MainActivity extends AppCompatActivity {
 //
 //        startActivityForResult(signInIntent, 1);
 
-        SaveCarDataJson(settings);
+        File dir = getFilesDir();
+        File file = new File(dir, "cardata.json");
+        if(!file.exists()){
+            initSettings(settings);
+        }
+        settings = LoadCarDataJson();
 
-        TextView starttime = (TextView) this.findViewById(R.id.starttime);
+        calname.setText(settings.getCalendarName());
 
         Calendar time = Calendar.getInstance();
-        time.setTimeInMillis(Long.parseLong(getCarDataJson("starttime")));
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+
+        time.setTimeInMillis(settings.getStartMillis());
         String datestring = sdf.format(time.getTime());
         starttime.setText(datestring);
+
+        time.setTimeInMillis(settings.getEndMillis());
+        datestring = sdf.format(time.getTime());
+        endtime.setText(datestring);
+    }
+
+    private void initSettings(CarDataSettings set) {
+        set.setCalendarName("");
+        set.setStartMillis(0);
+        set.setEndMillis(0);
+        set.setAccountType("com.google");
     }
 
     private long getCalendarId() {
@@ -94,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
         //String[] selArgs = new String[] { "oszvaldgergo20@gmail.com", "com.google", "Jövőbeli események" };
 
-        String calendarname = ((TextView)findViewById(R.id.calendarname)).getText().toString();
+        String calendarname = calname.getText().toString();
 
         String[] selArgs = new String[] { "oszvaldgergo20@gmail.com", "com.google", calendarname };
         if (ActivityCompat.checkSelfPermission(this,
@@ -138,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void AddStartTime(View v)
     {
-        TextView starttime = (TextView)this.findViewById(R.id.starttime);
-
         Calendar time = Calendar.getInstance();
         time.setTime(new Date());
 
@@ -147,23 +174,21 @@ public class MainActivity extends AppCompatActivity {
         String datestring = sdf.format(new Date());
         starttime.setText(datestring);
 
-        startMillis = time.getTimeInMillis();
         settings.setStartMillis(time.getTimeInMillis());
 
-        JSONObject jsonObject = new JSONObject();
+        Gson gson = new Gson();
         try {
-            jsonObject.put("starttime", startMillis);
-
-            String userString = jsonObject.toString();
-// Define the File Path and its Name
+            String userString = gson.toJson(settings);
             File file = new File(getFilesDir(), "cardata.json");
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(userString);
             bufferedWriter.close();
-        } catch (JSONException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+        starttime.setTextColor(Color.rgb(255, 0, 0));
     }
 
     private String getCarDataJson(String attribute)
@@ -196,38 +221,65 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
+    private CarDataSettings LoadCarDataJson()
+    {
+        File file = new File(getFilesDir(), "cardata.json");
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            StringBuilder stringBuilder = new StringBuilder();
+            String line = bufferedReader.readLine();
+            while (line != null){
+                stringBuilder.append(line).append("\n");
+                line = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+
+            String response = stringBuilder.toString();
+
+            Gson gson = new Gson();
+
+            return gson.fromJson(response, CarDataSettings.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new CarDataSettings();
+
+    }
+
+
     private void SaveCarDataJson(CarDataSettings set)
     {
-
-        JSONObject jsonObject = new JSONObject();
-
         Gson gson = new Gson();
         String json = gson.toJson(set);
-        try {
-            jsonObject.put("starttime", startMillis);
 
-            String userString = jsonObject.toString();
-// Define the File Path and its Name
+        try {
             File file = new File(getFilesDir(), "cardata.json");
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(userString);
+            bufferedWriter.write(json);
             bufferedWriter.close();
-        } catch (JSONException | IOException e) {
+
+            settings.setStartMillis(0);
+            settings.setEndMillis(0);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void AddEndTime(View v)
     {
-        TextView endtime = (TextView)this.findViewById(R.id.endtime);
         Calendar time = Calendar.getInstance();
         time.setTime(new Date());
 
-        endMillis = time.getTimeInMillis();
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+        settings.setEndMillis(time.getTimeInMillis());
+
         String datestring = sdf.format(new Date());
+
         endtime.setText(datestring);
     }
 
@@ -248,13 +300,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-
             ContentResolver cr = getContentResolver();
             ContentValues values = new ContentValues();
-            values.put(CalendarContract.Events.DTSTART, Long.parseLong(getCarDataJson("starttime")));
-            values.put(CalendarContract.Events.DTEND, endMillis);
+            values.put(CalendarContract.Events.DTSTART, settings.getStartMillis());
+            values.put(CalendarContract.Events.DTEND, settings.getEndMillis());
             values.put(CalendarContract.Events.TITLE, "Autó használat");
-            //values.put(CalendarContract.Events.DESCRIPTION, "Description to the example event");
             values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().toString());
             values.put(CalendarContract.Events.CALENDAR_ID, calID);
 
@@ -281,7 +331,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-        dlgAlert.setMessage(out);
+        Gson gson = new Gson();
+        dlgAlert.setMessage(gson.toJson(settings));
         dlgAlert.setTitle("App Title");
         dlgAlert.setPositiveButton("OK", null);
         dlgAlert.setCancelable(true);
@@ -290,7 +341,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void SaveConfig(View view)
     {
-        ListMyCalendars(); //külön gombra elérhető naptárak megjelenítése ?
-        //kéne egy objektum, ami tárolja az összes elmentendő adatot
+        //ListMyCalendars(); //külön gombra elérhető naptárak megjelenítése ?
+        settings.setCalendarName(calname.getText().toString());
+
+        SaveCarDataJson(settings);
+        Toast.makeText(this, "Naptár elmentve", Toast.LENGTH_SHORT).show();
     }
 }
