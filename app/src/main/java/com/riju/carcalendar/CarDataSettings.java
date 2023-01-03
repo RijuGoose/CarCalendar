@@ -1,5 +1,9 @@
 package com.riju.carcalendar;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
+
 public class CarDataSettings {
     private long startMillis;
     private long endMillis;
@@ -7,6 +11,7 @@ public class CarDataSettings {
     private String accountType; // "com.google"
 
     public CarDataSettings() {
+
     }
 
 
