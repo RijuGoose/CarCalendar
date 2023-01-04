@@ -2,6 +2,7 @@ package com.riju.carcalendar;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,6 +19,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 
@@ -31,60 +35,67 @@ public class AutoBTService extends Service {
 
     CarDataSettings settings;
     SharedPreferences shrp;
-    ScheduledExecutorService schedule_ex;
 
     public AutoBTService() {
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onCreate() {
         super.onCreate();
         shrp = getSharedPreferences("CarCalendarSettings", MODE_PRIVATE);
         settings = LoadCarDataJson();
-        BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
-        //BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
 
-        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-//        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-//        this.registerReceiver(broadcastReceiver, filter);
-//        Log.i("BTReceive", "mutasd mar");
+        IntentFilter filter = new IntentFilter("com.riju.carcalendar.CARBT_CONNECTION");
+        this.registerReceiver(broadcastReceiver, filter);
+    }
 
+    @Override
+    public void onDestroy() {
+        this.unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        BluetoothDevice device;
 
         @SuppressLint("MissingPermission")
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Toast.makeText(AutoBTService.this, "onReceive lefutott", Toast.LENGTH_SHORT).show();
-            //Log.i("BTReceive", "onReceive lefutott");
-            String action = intent.getAction();
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-            if(action.equals(BluetoothAdapter.ACTION_STATE_CHANGED))
+            //Log.i("BTReceive", "CARBT fogadása lefutott");
+            final String state = intent.getStringExtra("status");
+            final String devname = intent.getStringExtra("devicename");
+
+            if(state.equals("Connected") && devname.equals(settings.getBtDeviceName()))
             {
-                switch(state)
-                {
-                    case BluetoothAdapter.STATE_ON:
-                        Toast.makeText(AutoBTService.this, "bt bekapcsolva", Toast.LENGTH_SHORT).show();
-                        break;
-                    case BluetoothAdapter.STATE_OFF:
-                        Toast.makeText(AutoBTService.this, "bt kikapcsolva", Toast.LENGTH_SHORT).show();
-                        break;
-                }
+                Toast.makeText(AutoBTService.this, "Autó vezetése elkezdődött", Toast.LENGTH_SHORT).show();
+                Log.i("BTReceive", "Autó vezetése elkezdődött");
+                AddStartTime();
             }
-            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
+            else if(state.equals("Disconnected") && devname.equals(settings.getBtDeviceName()))
             {
-                Toast.makeText(AutoBTService.this, "szétkapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AutoBTService.this, "Autó vezetése befejeződött", Toast.LENGTH_SHORT).show();
+                Log.i("BTReceive", "Autó vezetése befejeződött");
                 AddEndTime();
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
-            {
-                Toast.makeText(AutoBTService.this, "szétkapcsolva: " + device.getName(),       Toast.LENGTH_SHORT).show();
-                AddEndTime();
+
+                Intent addcalIntent = new Intent(getApplicationContext(), AddCalendarBroadcastReceiver.class);
+                addcalIntent.setAction("com.riju.carcalendar.ADD_TO_CALENDAR");
+                addcalIntent.putExtra("starttime", 0);
+                addcalIntent.putExtra("endtime", 0);
+                addcalIntent.putExtra("calendarname", "");
+                PendingIntent notiIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, addcalIntent, PendingIntent.FLAG_IMMUTABLE);
+
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "btnotiend")
+                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setContentText("Befejezted a vezetést. Ide kattintva hozzá tudod adni a naptárhoz.")
+                        .setContentTitle("Befejezett vezetés")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setOnlyAlertOnce(true)
+                        .setContentIntent(notiIntent)
+                        //.addAction(R.drawable.ic_launcher_background, "Naptárhoz adás", notiIntent)
+                        .setAutoCancel(true);
+//
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                notificationManager.notify(2, builder.build());
             }
         }
     };

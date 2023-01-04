@@ -8,6 +8,7 @@ public class CarDataSettings {
     private long startMillis;
     private long endMillis;
     private String calendarName;
+    private String btDeviceName;
     private String accountType; // "com.google"
 
     public CarDataSettings() {
@@ -45,5 +46,13 @@ public class CarDataSettings {
 
     public void setAccountType(String accountType) {
         this.accountType = accountType;
+    }
+
+    public String getBtDeviceName() {
+        return btDeviceName;
+    }
+
+    public void setBtDeviceName(String btDeviceName) {
+        this.btDeviceName = btDeviceName;
     }
 }
