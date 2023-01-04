@@ -29,11 +29,11 @@
         <service
             android:name=".AutoBTService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+        </service>
 
         <receiver android:name=".CarBTBroadcastReceiver" android:exported="true">
             <intent-filter>
-                <action android:name="android.bluetooth.device.action.ACTION_STATE_CHANGED"/>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED"/>
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED"/>
             </intent-filter>
@@ -44,7 +44,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -11,12 +11,14 @@ import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class CarBTBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = "CarBTReceiver";
+    private static final String TAG = "CarBTBroadcastReceiver";
     BluetoothDevice device;
 
     @SuppressLint("MissingPermission")
@@ -40,21 +42,23 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
 //            }
 //        }
         Intent notif = new Intent();
-        intent.setAction("com.riju.carcalendar.BTCONNECTION");
+        notif.setAction("com.riju.carcalendar.CARBT_CONNECTION");
         if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
         {
             Log.i("BTconnection", "összekapcsolva: " + device.getName());
-            Toast.makeText(context.getApplicationContext(), "összekapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
-            intent.putExtra("status", "Connected");
-            intent.putExtra("devicename", device.getName());
+            //Toast.makeText(context.getApplicationContext(), "összekapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
+            notif.putExtra("status", "Connected");
+            notif.putExtra("devicename", device.getName());
+            context.sendBroadcast(notif);
             //AddStartTime();
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
         {
             Log.i("BTconnection", "szétkapcsolva: " + device.getName());
-            Toast.makeText(context.getApplicationContext(), "szétkapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
-            intent.putExtra("status", "Disconnected");
-            intent.putExtra("devicename", device.getName());
+            //Toast.makeText(context.getApplicationContext(), "szétkapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
+            notif.putExtra("status", "Disconnected");
+            notif.putExtra("devicename", device.getName());
+            context.sendBroadcast(notif);
             //AddEndTime();
         }
     }

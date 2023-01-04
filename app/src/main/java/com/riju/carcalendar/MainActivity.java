@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
     TextView starttime;
     TextView endtime;
     TextView calname;
+    TextView btdevname;
 
     @Override
     protected void onPause() {
@@ -63,6 +64,7 @@ public class MainActivity extends Activity {
         starttime = (TextView) this.findViewById(R.id.starttime);
         endtime = (TextView) this.findViewById(R.id.endtime);
         calname = (TextView) this.findViewById(R.id.calendarname);
+        btdevname = (TextView) this.findViewById(R.id.btname);
 
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_CALENDAR}, 1);
@@ -86,9 +88,6 @@ public class MainActivity extends Activity {
         //ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 5);
 
         createNotificationChannel();
-
-        BluetoothManager manager = getSystemService(BluetoothManager.class);
-        manager.getAdapter().getBondedDevices().forEach(f -> Log.i("BTReceiver", "Registered device: "+f.getName()));
 
         if(!shrp.contains("CarDataSettings"))
         {
@@ -140,9 +139,9 @@ public class MainActivity extends Activity {
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Autó érzékelő";
-            String description = "Érzékeli, hogyha a felhasználó autóban ül, és elküld róla egy értesítést";
+            String description = "Ha a felhasználó befejezte a vezetést, kap egy értesítést róla.";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("speedonoti", name, importance);
+            NotificationChannel channel = new NotificationChannel("btnotiend", name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
@@ -151,29 +150,29 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void AddStartTime(View v) {
-        Calendar time = Calendar.getInstance();
-        time.setTime(new Date());
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-        String datestring = sdf.format(new Date());
-        starttime.setText(datestring);
-
-        settings.setStartMillis(time.getTimeInMillis());
-        SaveCarDataJson(settings);
-    }
-
-    public void AddEndTime(View v) {
-        Calendar time = Calendar.getInstance();
-        time.setTime(new Date());
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-        String datestring = sdf.format(new Date());
-        endtime.setText(datestring);
-
-        settings.setEndMillis(time.getTimeInMillis());
-        SaveCarDataJson(settings);
-    }
+//    public void AddStartTime(View v) {
+//        Calendar time = Calendar.getInstance();
+//        time.setTime(new Date());
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+//        String datestring = sdf.format(new Date());
+//        starttime.setText(datestring);
+//
+//        settings.setStartMillis(time.getTimeInMillis());
+//        SaveCarDataJson(settings);
+//    }
+//
+//    public void AddEndTime(View v) {
+//        Calendar time = Calendar.getInstance();
+//        time.setTime(new Date());
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+//        String datestring = sdf.format(new Date());
+//        endtime.setText(datestring);
+//
+//        settings.setEndMillis(time.getTimeInMillis());
+//        SaveCarDataJson(settings);
+//    }
 
     private CarDataSettings LoadCarDataJson() {
         Gson gson = new Gson();
@@ -184,6 +183,7 @@ public class MainActivity extends Activity {
     private void SetTexts(CarDataSettings set)
     {
         calname.setText(set.getCalendarName());
+        btdevname.setText(set.getBtDeviceName());
 
         Calendar time = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
@@ -257,8 +257,9 @@ public class MainActivity extends Activity {
     public void SaveConfig(View view) {
         //ListMyCalendars(); //külön gombra elérhető naptárak megjelenítése ?
         settings.setCalendarName(calname.getText().toString());
+        settings.setBtDeviceName(btdevname.getText().toString());
 
         SaveCarDataJson(settings);
-        Toast.makeText(this, "Naptár elmentve", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Beállítások elmentve", Toast.LENGTH_SHORT).show();
     }
 }
