@@ -30,6 +30,9 @@
             android:name=".AutoBTService"
             android:enabled="true"
             android:exported="true">
+            <intent-filter>
+                <action android:name="com.riju.carcalendar.CARBT_CONNECTION"/>
+            </intent-filter>
         </service>
 
         <receiver android:name=".CarBTBroadcastReceiver" android:exported="true">

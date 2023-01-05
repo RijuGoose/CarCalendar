@@ -45,9 +45,11 @@ public class AutoBTService extends Service {
         shrp = getSharedPreferences("CarCalendarSettings", MODE_PRIVATE);
         settings = LoadCarDataJson();
 
-        IntentFilter filter = new IntentFilter("com.riju.carcalendar.CARBT_CONNECTION");
-        this.registerReceiver(broadcastReceiver, filter);
+        //IntentFilter filter = new IntentFilter("com.riju.carcalendar.CARBT_CONNECTION");
+        //this.registerReceiver(broadcastReceiver, filter);
     }
+
+
 
     @Override
     public void onDestroy() {
