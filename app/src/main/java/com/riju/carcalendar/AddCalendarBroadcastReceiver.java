@@ -18,13 +18,15 @@ import androidx.core.app.ActivityCompat;
 import java.util.Calendar;
 
 public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
+    private static final String TAG = "AddCalendarBroadcastReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("BTReceiver", "AddCalendar meghívódott");
         long start = intent.getLongExtra("starttime", 0);
         long end = intent.getLongExtra("endtime", 0);
         String calendarname = intent.getStringExtra("calendarname");
         AddEventToCalendar(context, calendarname, start, end);
+        Log.d("BTReceiver", "AddCalendar meghívódott" + start);
     }
 
     public void AddEventToCalendar(Context context, String calendarname, long starttime, long endtime) {
@@ -34,7 +36,7 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
             long calID = getCalendarId(context, calendarname);
 
             if (calID == -1) {
-                Toast.makeText(context, "A megadott naptár nem található", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "A megadott naptár nem található: " + calendarname, Toast.LENGTH_LONG).show();
                 return;
             }
 

@@ -26,14 +26,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CarCalendar"
         tools:targetApi="31">
-        <service
-            android:name=".AutoBTService"
-            android:enabled="true"
-            android:exported="true">
+
+        <receiver android:name=".AddCalendarBroadcastReceiver" android:exported="true">
             <intent-filter>
-                <action android:name="com.riju.carcalendar.CARBT_CONNECTION"/>
+                <action android:name="com.riju.carcalendar.ADD_TO_CALENDAR"/>
             </intent-filter>
-        </service>
+        </receiver>
 
         <receiver android:name=".CarBTBroadcastReceiver" android:exported="true">
             <intent-filter>
