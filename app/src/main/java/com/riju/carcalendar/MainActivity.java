@@ -91,14 +91,11 @@ public class MainActivity extends Activity {
 
         if(!shrp.contains("CarDataSettings"))
         {
-            SaveCarDataJson(settings);
+            initSettings(settings);
         }
 
         settings = LoadCarDataJson();
         SetTexts(settings);
-
-        Intent intent = new Intent(this, AutoBTService.class);
-        startService(intent);
     }
 
     private void initSettings(CarDataSettings set) {
@@ -149,30 +146,6 @@ public class MainActivity extends Activity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-
-//    public void AddStartTime(View v) {
-//        Calendar time = Calendar.getInstance();
-//        time.setTime(new Date());
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-//        String datestring = sdf.format(new Date());
-//        starttime.setText(datestring);
-//
-//        settings.setStartMillis(time.getTimeInMillis());
-//        SaveCarDataJson(settings);
-//    }
-//
-//    public void AddEndTime(View v) {
-//        Calendar time = Calendar.getInstance();
-//        time.setTime(new Date());
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-//        String datestring = sdf.format(new Date());
-//        endtime.setText(datestring);
-//
-//        settings.setEndMillis(time.getTimeInMillis());
-//        SaveCarDataJson(settings);
-//    }
 
     private CarDataSettings LoadCarDataJson() {
         Gson gson = new Gson();

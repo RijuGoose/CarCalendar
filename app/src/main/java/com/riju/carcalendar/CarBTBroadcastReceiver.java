@@ -1,6 +1,7 @@
 package com.riju.carcalendar;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -11,6 +12,8 @@ import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
@@ -31,41 +34,41 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         shrp = context.getSharedPreferences("CarCalendarSettings", Context.MODE_PRIVATE);
         settings = LoadCarDataJson();
+
         String action = intent.getAction();
         device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//        final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-//        if(action.equals(BluetoothAdapter.ACTION_STATE_CHANGED))
-//        {
-//            Toast.makeText(context.getApplicationContext(), "státusz változott", Toast.LENGTH_SHORT).show();
-//
-//            switch(state)
-//            {
-//                case BluetoothAdapter.STATE_ON:
-//                    Toast.makeText(context.getApplicationContext(), "bt bekapcsolva", Toast.LENGTH_SHORT).show();
-//                    break;
-//                case BluetoothAdapter.STATE_OFF:
-//                    Toast.makeText(context.getApplicationContext(), "bt kikapcsolva", Toast.LENGTH_SHORT).show();
-//                    break;
-//            }
-//        }
-        //Intent notif = new Intent();
-        //notif.setAction("com.riju.carcalendar.CARBT_CONNECTION");
+
         if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
         {
             Log.i("BTconnection", "összekapcsolva: " + device.getName());
-            //Toast.makeText(context.getApplicationContext(), "összekapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
-            //notif.putExtra("status", "Connected");
-            //notif.putExtra("devicename", device.getName());
-            //context.sendBroadcast(notif);
+            Toast.makeText(context, "Autó vezetése elkezdődött", Toast.LENGTH_SHORT).show();
             AddStartTime();
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
         {
             Log.i("BTconnection", "szétkapcsolva: " + device.getName());
-            //Toast.makeText(context.getApplicationContext(), "szétkapcsolva: " + device.getName(), Toast.LENGTH_SHORT).show();
-            //notif.putExtra("status", "Disconnected");
-            //notif.putExtra("devicename", device.getName());
-            //context.sendBroadcast(notif);
+            Toast.makeText(context, "Autó vezetése befejeződött", Toast.LENGTH_SHORT).show();
+
+            Intent addcalIntent = new Intent(context, AddCalendarBroadcastReceiver.class);
+            addcalIntent.setAction("com.riju.carcalendar.ADD_TO_CALENDAR");
+            addcalIntent.putExtra("starttime", settings.getStartMillis());
+            addcalIntent.putExtra("endtime", settings.getEndMillis());
+            addcalIntent.putExtra("calendarname", settings.getCalendarName());
+            PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_IMMUTABLE);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentText("Befejezted a vezetést. Ide kattintva hozzá tudod adni a naptárhoz.")
+                    .setContentTitle("Befejezett vezetés")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setOnlyAlertOnce(true)
+                    .setContentIntent(notiIntent)
+                    //.addAction(R.drawable.ic_launcher_background, "Naptárhoz adás", notiIntent)
+                    .setAutoCancel(true);
+//
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.notify(2, builder.build());
+
             AddEndTime();
         }
     }
