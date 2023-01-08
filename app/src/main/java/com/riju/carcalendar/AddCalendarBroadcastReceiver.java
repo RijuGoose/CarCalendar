@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
@@ -26,7 +27,24 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
         long end = intent.getLongExtra("endtime", 0);
         String calendarname = intent.getStringExtra("calendarname");
         AddEventToCalendar(context, calendarname, start, end);
-        Log.d("BTReceiver", "AddCalendar meghívódott" + start);
+
+
+        Calendar time = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+
+        time.setTimeInMillis(start);
+        String datestring = sdf.format(time.getTime());
+        String datestringstart = datestring;
+
+        time.setTimeInMillis(end);
+        datestring = sdf.format(time.getTime());
+        String datestringend = datestring;
+
+        Log.d("BTReceiver", "AddCalendar meghívódott: " + datestringstart + " - " + datestringend + "(" + end + ")");
+
+        Toast.makeText(context, "Bejegyzés hozzáadva: " + calendarname, Toast.LENGTH_LONG).show();
+
+
     }
 
     public void AddEventToCalendar(Context context, String calendarname, long starttime, long endtime) {

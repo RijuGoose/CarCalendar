@@ -38,22 +38,24 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-        if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
+        if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
             Log.i("BTconnection", "összekapcsolva: " + device.getName());
             Toast.makeText(context, "Autó vezetése elkezdődött", Toast.LENGTH_SHORT).show();
             AddStartTime();
         }
-        else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
+        else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
             Log.i("BTconnection", "szétkapcsolva: " + device.getName());
             Toast.makeText(context, "Autó vezetése befejeződött", Toast.LENGTH_SHORT).show();
+            AddEndTime();
 
             Intent addcalIntent = new Intent(context, AddCalendarBroadcastReceiver.class);
             addcalIntent.setAction("com.riju.carcalendar.ADD_TO_CALENDAR");
             addcalIntent.putExtra("starttime", settings.getStartMillis());
             addcalIntent.putExtra("endtime", settings.getEndMillis());
             addcalIntent.putExtra("calendarname", settings.getCalendarName());
+            Log.d("BTReceiver", "elküldött adatok: "+ settings.getStartMillis() + " - " + settings.getEndMillis() + " - " + settings.getCalendarName());
             PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_IMMUTABLE);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
@@ -69,7 +71,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.notify(2, builder.build());
 
-            AddEndTime();
         }
     }
 
@@ -79,7 +80,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
         time.setTime(new Date());
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-        String datestring = sdf.format(new Date());
 
         settings.setStartMillis(time.getTimeInMillis());
         SaveCarDataJson(settings);
@@ -90,7 +90,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
         time.setTime(new Date());
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-        String datestring = sdf.format(new Date());
 
         settings.setEndMillis(time.getTimeInMillis());
         SaveCarDataJson(settings);
