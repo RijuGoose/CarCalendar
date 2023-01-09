@@ -72,14 +72,14 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
 
     private long getCalendarId(Context context, String calendarname) {
         String[] projection = new String[]{CalendarContract.Calendars._ID};
-        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
-                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? AND "
-                + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
-        // use the same values as above:
-        //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
-        //String[] selArgs = new String[] { "oszvaldgergo20@gmail.com", "com.google", "Jövőbeli események" };
+//        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
+//                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? AND "
+//                + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
 
-        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
+        String selection = CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
+
+//        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
+        String[] selArgs = new String[]{calendarname};
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             return -1;
