@@ -26,6 +26,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.api.services.calendar.model.Setting;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
@@ -39,8 +41,6 @@ public class MainActivity extends Activity {
 
     TextView starttime;
     TextView endtime;
-    TextView calname;
-    TextView btdevname;
 
     @Override
     protected void onPause() {
@@ -63,8 +63,6 @@ public class MainActivity extends Activity {
         shrp = getSharedPreferences("CarCalendarSettings", MODE_PRIVATE);
         starttime = (TextView) this.findViewById(R.id.starttime);
         endtime = (TextView) this.findViewById(R.id.endtime);
-        calname = (TextView) this.findViewById(R.id.calendarname);
-        btdevname = (TextView) this.findViewById(R.id.btname);
 
         createNotificationChannel();
 
@@ -126,30 +124,30 @@ public class MainActivity extends Activity {
         SaveCarDataJson(set);
     }
 
-    private long getCalendarId() {
-        String[] projection = new String[]{CalendarContract.Calendars._ID};
-        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
-                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? AND "
-                + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
-        // use the same values as above:
-        //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
-        //String[] selArgs = new String[] { "oszvaldgergo20@gmail.com", "com.google", "Jövőbeli események" };
-
-        String calendarname = calname.getText().toString();
-
-        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            return -1;
-        }
-
-        Cursor cursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
-                selArgs, null);
-        if (cursor.moveToFirst()) {
-            return cursor.getLong(0);
-        }
-        return -1;
-    }
+//    private long getCalendarId() {
+//        String[] projection = new String[]{CalendarContract.Calendars._ID};
+//        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
+//                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? AND "
+//                + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
+//        // use the same values as above:
+//        //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
+//        //String[] selArgs = new String[] { "oszvaldgergo20@gmail.com", "com.google", "Jövőbeli események" };
+//
+//        String calendarname = calname.getText().toString();
+//
+//        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
+//        if (ActivityCompat.checkSelfPermission(this,
+//                Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+//            return -1;
+//        }
+//
+//        Cursor cursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
+//                selArgs, null);
+//        if (cursor.moveToFirst()) {
+//            return cursor.getLong(0);
+//        }
+//        return -1;
+//    }
 
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -175,8 +173,8 @@ public class MainActivity extends Activity {
 
     private void SetTexts(CarDataSettings set)
     {
-        calname.setText(set.getCalendarName());
-        btdevname.setText(set.getBtDeviceName());
+        //calname.setText(set.getCalendarName());
+        //btdevname.setText(set.getBtDeviceName());
 
         Calendar time = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
@@ -198,61 +196,59 @@ public class MainActivity extends Activity {
         editor.apply();
     }
 
-    public void AddEventToCalendar(View v) {
-        int permCalendar = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_CALENDAR);
+//    public void AddEventToCalendar(View v) {
+//        int permCalendar = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_CALENDAR);
+//
+//        if (permCalendar == PackageManager.PERMISSION_GRANTED) {
+//            long calID = getCalendarId();
+//
+//            if (calID == -1) {
+//                Toast.makeText(MainActivity.this, "Naptár nem található", Toast.LENGTH_LONG).show();
+//                return;
+//            }
+//
+//            ContentResolver cr = getContentResolver();
+//            ContentValues values = new ContentValues();
+//            values.put(CalendarContract.Events.DTSTART, settings.getStartMillis());
+//            values.put(CalendarContract.Events.DTEND, settings.getEndMillis());
+//            values.put(CalendarContract.Events.TITLE, "Autó használat");
+//            values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().toString());
+//            values.put(CalendarContract.Events.CALENDAR_ID, calID);
+//
+//            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+//        }
+//    }
 
-        if (permCalendar == PackageManager.PERMISSION_GRANTED) {
-            long calID = getCalendarId();
 
-            if (calID == -1) {
-                Toast.makeText(MainActivity.this, "Naptár nem található", Toast.LENGTH_LONG).show();
-                return;
-            }
+//    public void ListMyCalendars() {
+//        String[] projection = new String[]{CalendarContract.Calendars._ID, CalendarContract.Calendars.ACCOUNT_NAME, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME};
+//        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
+//                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? ";
+//        // use the same values as above:
+//        //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
+//        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google"};
+//
+//        Cursor cursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
+//                selArgs, null);
+//
+//        String out = "";
+//        while (cursor.moveToNext()) {
+//
+//            out += cursor.getLong(0) + ", " + cursor.getString(1) + ", " + cursor.getString(2) + "\r\n";
+//        }
+//
+//        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+//        Gson gson = new Gson();
+//        dlgAlert.setMessage(gson.toJson(settings));
+//        dlgAlert.setTitle("App Title");
+//        dlgAlert.setPositiveButton("OK", null);
+//        dlgAlert.setCancelable(true);
+//        dlgAlert.create().show();
+//    }
 
-            ContentResolver cr = getContentResolver();
-            ContentValues values = new ContentValues();
-            values.put(CalendarContract.Events.DTSTART, settings.getStartMillis());
-            values.put(CalendarContract.Events.DTEND, settings.getEndMillis());
-            values.put(CalendarContract.Events.TITLE, "Autó használat");
-            values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().toString());
-            values.put(CalendarContract.Events.CALENDAR_ID, calID);
 
-            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-        }
-    }
-
-    public void ListMyCalendars() {
-        String[] projection = new String[]{CalendarContract.Calendars._ID, CalendarContract.Calendars.ACCOUNT_NAME, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME};
-        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
-                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? ";
-        // use the same values as above:
-        //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
-        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google"};
-
-        Cursor cursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
-                selArgs, null);
-
-        String out = "";
-        while (cursor.moveToNext()) {
-
-            out += cursor.getLong(0) + ", " + cursor.getString(1) + ", " + cursor.getString(2) + "\r\n";
-        }
-
-        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-        Gson gson = new Gson();
-        dlgAlert.setMessage(gson.toJson(settings));
-        dlgAlert.setTitle("App Title");
-        dlgAlert.setPositiveButton("OK", null);
-        dlgAlert.setCancelable(true);
-        dlgAlert.create().show();
-    }
-
-    public void SaveConfig(View view) {
-        //ListMyCalendars(); //külön gombra elérhető naptárak megjelenítése ?
-        settings.setCalendarName(calname.getText().toString());
-        settings.setBtDeviceName(btdevname.getText().toString());
-
-        SaveCarDataJson(settings);
-        Toast.makeText(this, "Beállítások elmentve", Toast.LENGTH_SHORT).show();
+    public void GoToSettings(View view) {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

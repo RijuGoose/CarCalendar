@@ -58,9 +58,20 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             Log.d("BTReceiver", "elküldött adatok: "+ settings.getStartMillis() + " - " + settings.getEndMillis() + " - " + settings.getCalendarName());
             PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_IMMUTABLE);
 
+            Calendar time = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM.dd HH:mm");
+
+            time.setTimeInMillis(settings.getStartMillis());
+            String datestring = sdf.format(time.getTime());
+            String datestringstart = datestring;
+
+            time.setTimeInMillis(settings.getEndMillis());
+            datestring = sdf.format(time.getTime());
+            String datestringend = datestring;
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
                     .setSmallIcon(R.drawable.ic_launcher_background)
-                    .setContentText("Befejezted a vezetést. Ide kattintva hozzá tudod adni a naptárhoz.")
+                    .setContentText(datestringstart + " - " + datestringend + "\r\nIde kattintva hozzá tudod adni a vezetést a naptárhoz.")
                     .setContentTitle("Befejezett vezetés")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setOnlyAlertOnce(true)

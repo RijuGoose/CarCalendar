@@ -6,61 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-
-<!--    <Button-->
-<!--        android:id="@+id/startbtn"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_width="0dp"-->
-<!--        app:layout_constraintHeight_percent="0.1"-->
-<!--        app:layout_constraintWidth_percent="0.4"-->
-<!--        android:text="Start time"-->
-
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-
-<!--        app:layout_constraintHorizontal_bias="0.15"-->
-<!--        app:layout_constraintVertical_bias="0.8"-->
-<!--        android:onClick="AddStartTime"-->
-
-<!--        />-->
-<!--    <Button-->
-<!--        android:id="@+id/endbtn"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_width="0dp"-->
-<!--        app:layout_constraintHeight_percent="0.1"-->
-<!--        app:layout_constraintWidth_percent="0.4"-->
-<!--        android:text="End time"-->
-
-<!--        app:layout_constraintStart_toEndOf="@id/startbtn"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-
-<!--        app:layout_constraintHorizontal_bias="0.2"-->
-<!--        app:layout_constraintVertical_bias="0.8"-->
-
-
-<!--        android:onClick="AddEndTime"-->
-<!--        />-->
-
     <Button
-        android:id="@+id/addbtn"
+        android:id="@+id/settingsbtn"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:text="Add to Calendar"
+        android:text="Settings"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
 
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
 
-        android:onClick="AddEventToCalendar"
+        android:onClick="GoToSettings"
         />
 
     <TextView
@@ -71,11 +31,11 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/addbtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.6"
+        app:layout_constraintVertical_bias="0.4"
         />
 
     <TextView
@@ -86,54 +46,11 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/addbtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.8"
+        app:layout_constraintVertical_bias="0.6"
         />
 
-    <EditText
-        android:id="@+id/calendarname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Calendar name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
-
-    <EditText
-        android:id="@+id/btname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Bluetooth device name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/calendarname"
-        app:layout_constraintStart_toStartOf="@id/calendarname"
-
-        app:layout_constraintTop_toBottomOf="@id/calendarname"
-        app:layout_constraintVertical_bias="0.02" />
-    <Button
-        android:id="@+id/savebtn"
-        android:layout_height="0dp"
-        android:layout_width="0dp"
-        app:layout_constraintHeight_percent="0.06"
-        app:layout_constraintWidth_percent="0.4"
-        android:text="Save"
-
-        app:layout_constraintStart_toStartOf="@id/btname"
-        app:layout_constraintEnd_toEndOf="@id/btname"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btname"
-
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.03"
-        android:onClick="SaveConfig"
-
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>
