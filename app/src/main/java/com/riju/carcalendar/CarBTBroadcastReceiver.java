@@ -2,14 +2,17 @@ package com.riju.carcalendar;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -40,14 +43,13 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
 
         if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
-            Log.i("BTconnection", "összekapcsolva: " + device.getName());
-            Toast.makeText(context, "Autó vezetése elkezdődött", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Driving started", Toast.LENGTH_SHORT).show();
             AddStartTime();
+
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
-            Log.i("BTconnection", "szétkapcsolva: " + device.getName());
-            Toast.makeText(context, "Autó vezetése befejeződött", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Driving ended", Toast.LENGTH_SHORT).show();
             AddEndTime();
 
             Intent addcalIntent = new Intent(context, AddCalendarBroadcastReceiver.class);
@@ -55,7 +57,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             addcalIntent.putExtra("starttime", settings.getStartMillis());
             addcalIntent.putExtra("endtime", settings.getEndMillis());
             addcalIntent.putExtra("calendarname", settings.getCalendarName());
-            Log.d("BTReceiver", "elküldött adatok: "+ settings.getStartMillis() + " - " + settings.getEndMillis() + " - " + settings.getCalendarName());
             PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_IMMUTABLE);
 
             Calendar time = Calendar.getInstance();
@@ -71,8 +72,8 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
                     .setSmallIcon(R.drawable.ic_launcher_background)
-                    .setContentText(datestringstart + " - " + datestringend + "\r\nIde kattintva hozzá tudod adni a vezetést a naptárhoz.")
-                    .setContentTitle("Befejezett vezetés")
+                    .setContentText(datestringstart + " - " + datestringend + "\r\nClick here to add to your calendar.")
+                    .setContentTitle("Driving ended")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setOnlyAlertOnce(true)
                     .setContentIntent(notiIntent)
@@ -83,6 +84,36 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             notificationManager.notify(2, builder.build());
 
         }
+
+        WidgetUpdate(context);
+    }
+
+    public void WidgetUpdate(Context context)
+    {
+
+//        Calendar time = Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+//
+//        time.setTimeInMillis(settings.getStartMillis());
+//        String startstring = sdf.format(time.getTime());
+//
+//        time.setTimeInMillis(settings.getEndMillis());
+//        String endstring = sdf.format(time.getTime());
+//
+//        //CharSequence widgetText = context.getString(R.string.appwidget_text);
+//        // Construct the RemoteViews object
+//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_calendar_widget);
+//
+//        AppWidgetManager widgetmanager = AppWidgetManager.getInstance(context);
+//        views.setTextViewText(R.id.wstarttime, startstring + "\n - \n" + endstring);
+//        widgetmanager.updateAppWidget(widgetmanager.getAppWidgetIds(new ComponentName(context, CarCalendarWidget.class)), views);
+
+        Intent intent = new Intent(context, CarCalendarWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, CarCalendarWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        context.sendBroadcast(intent);
+
     }
 
     public void AddStartTime()
