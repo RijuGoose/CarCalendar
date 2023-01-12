@@ -54,7 +54,7 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
             long calID = getCalendarId(context, calendarname);
 
             if (calID == -1) {
-                Toast.makeText(context, "A megadott naptár nem található: " + calendarname, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Calendar not found: \"" + calendarname + "\"", Toast.LENGTH_LONG).show();
                 return;
             }
 
