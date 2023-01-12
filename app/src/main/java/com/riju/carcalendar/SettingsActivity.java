@@ -108,8 +108,7 @@ public class SettingsActivity extends AppCompatActivity {
         settings.setBtDeviceName(btdevname.getText().toString());
 
         SaveCarDataJson(settings);
-        Toast.makeText(this, "Beállítások elmentve", Toast.LENGTH_SHORT).show();
-        finish();
+        Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
     }
 
     private CarDataSettings LoadCarDataJson() {
