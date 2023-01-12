@@ -71,7 +71,7 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             String datestringend = datestring;
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
-                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setSmallIcon(R.drawable.ic_launcher)
                     .setContentText(datestringstart + " - " + datestringend + "\r\nClick here to add to your calendar.")
                     .setContentTitle("Driving ended")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -1,12 +1,7 @@
 <resources>
 
-    <style name="Widget.CarCalendar.AppWidget.Container" parent="android:Widget">
+    <style name="Widget.CarCalendar.AppWidget.Container" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="android:id">@android:id/background</item>
         <item name="android:background">?android:attr/colorBackground</item>
-    </style>
-
-    <style name="Widget.CarCalendar.AppWidget.InnerView" parent="android:Widget">
-        <item name="android:background">?android:attr/colorBackground</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 </resources>
