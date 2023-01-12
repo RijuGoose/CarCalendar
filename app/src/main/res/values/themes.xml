@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.CarCalendar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -29,8 +29,11 @@
         <!--
         Radius of the inner view's bound of widgets to make the rounded corners.
         It needs to be 8dp or less than the value of appWidgetRadius
+
+
         -->
         <item name="appWidgetInnerRadius">8dp</item>
+
     </style>
 
     <style name="Theme.CarCalendar.AppWidgetContainer" parent="Theme.CarCalendar.AppWidgetContainerParent">

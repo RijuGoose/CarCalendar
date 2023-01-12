@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
@@ -41,6 +44,22 @@ public class SettingsActivity extends AppCompatActivity {
 
         shrp = getSharedPreferences("CarCalendarSettings", MODE_PRIVATE);
 
+        createNotificationChannel();
+
+        ActivityCompat.requestPermissions(SettingsActivity.this, new String[]
+                        {
+                                Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_CONNECT,
+                                Manifest.permission.VIBRATE
+                        },
+                1);
+
+        if(!shrp.contains("CarDataSettings"))
+        {
+            initSettings(settings);
+        }
+
         settings = LoadCarDataJson();
 
         calname = (TextView) this.findViewById(R.id.calendarname);
@@ -51,6 +70,32 @@ public class SettingsActivity extends AppCompatActivity {
 //        ListMyCalendars();
         Log.d("BTReceiver", "calendarID: " + getCalendarId());
     }
+
+
+    private void initSettings(CarDataSettings set) {
+        set.setCalendarName("");
+        set.setStartMillis(0);
+        set.setEndMillis(0);
+        set.setAccountType("com.google");
+        SaveCarDataJson(set);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Autó érzékelő";
+            String description = "Ha a felhasználó befejezte a vezetést, kap egy értesítést róla.";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("btnotiend", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     private void SetTexts(CarDataSettings set)
     {
