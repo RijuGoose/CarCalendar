@@ -68,7 +68,6 @@ public class SettingsActivity extends AppCompatActivity {
         SetTexts(settings);
 
 //        ListMyCalendars();
-        Log.d("BTReceiver", "calendarID: " + getCalendarId());
     }
 
 
@@ -84,8 +83,8 @@ public class SettingsActivity extends AppCompatActivity {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Autó érzékelő";
-            String description = "Ha a felhasználó befejezte a vezetést, kap egy értesítést róla.";
+            CharSequence name = "Driving";
+            String description = "Sends a notification when the driving ends";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel("btnotiend", name, importance);
             channel.setDescription(description);
@@ -95,7 +94,6 @@ public class SettingsActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-
 
     private void SetTexts(CarDataSettings set)
     {
@@ -127,19 +125,14 @@ public class SettingsActivity extends AppCompatActivity {
 
     private long getCalendarId() {
         String[] projection = new String[]{CalendarContract.Calendars._ID};
-//        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
-//                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? AND "
-//                + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
 
         String selection = CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
         // use the same values as above:
-        //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
-        //String[] selArgs = new String[] { "oszvaldgergo20@gmail.com", "com.google", "Jövőbeli események" };
 
         String calendarname = settings.getCalendarName();
 
         //String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
-        String[] selArgs = new String[]{calendarname};
+        String[] selArgs = new String[]{ calendarname };
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             return -1;

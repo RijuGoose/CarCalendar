@@ -26,36 +26,26 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
         long start = intent.getLongExtra("starttime", 0);
         long end = intent.getLongExtra("endtime", 0);
         String calendarname = intent.getStringExtra("calendarname");
-        AddEventToCalendar(context, calendarname, start, end);
+        Log.d("btreceiver", "addcalb: " + calendarname);
 
+        long calid = AddEventToCalendar(context, calendarname, start, end);
 
-        Calendar time = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-
-        time.setTimeInMillis(start);
-        String datestring = sdf.format(time.getTime());
-        String datestringstart = datestring;
-
-        time.setTimeInMillis(end);
-        datestring = sdf.format(time.getTime());
-        String datestringend = datestring;
-
-        Log.d("BTReceiver", "AddCalendar meghívódott: " + datestringstart + " - " + datestringend + "(" + end + ")");
-
-        Toast.makeText(context, "Bejegyzés hozzáadva: " + calendarname, Toast.LENGTH_LONG).show();
-
-
+        if(calid == -1) {
+            Toast.makeText(context, "Calendar not found: \"" + calendarname + "\"", Toast.LENGTH_LONG).show();
+        }
+        else {
+            Toast.makeText(context, "Event added to \"" + calendarname + "\"", Toast.LENGTH_LONG).show();
+        }
     }
 
-    public void AddEventToCalendar(Context context, String calendarname, long starttime, long endtime) {
+    public long AddEventToCalendar(Context context, String calendarname, long starttime, long endtime) {
         int permCalendar = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR);
 
         if (permCalendar == PackageManager.PERMISSION_GRANTED) {
             long calID = getCalendarId(context, calendarname);
 
             if (calID == -1) {
-                Toast.makeText(context, "Calendar not found: \"" + calendarname + "\"", Toast.LENGTH_LONG).show();
-                return;
+                return -1;
             }
 
             ContentResolver cr = context.getContentResolver();
@@ -67,14 +57,14 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
             values.put(CalendarContract.Events.CALENDAR_ID, calID);
 
             Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+            return calID;
         }
+        return -1;
     }
 
     private long getCalendarId(Context context, String calendarname) {
         String[] projection = new String[]{CalendarContract.Calendars._ID};
-//        String selection = CalendarContract.Calendars.ACCOUNT_NAME + " = ? AND "
-//                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? AND "
-//                + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
 
         String selection = CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
 
