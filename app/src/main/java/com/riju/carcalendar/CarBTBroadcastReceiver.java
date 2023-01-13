@@ -45,7 +45,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
         {
             Toast.makeText(context, "Driving started", Toast.LENGTH_SHORT).show();
             AddStartTime();
-
         }
         else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
@@ -70,6 +69,8 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             datestring = sdf.format(time.getTime());
             String datestringend = datestring;
 
+            Log.d("btreceiver", "carbtrec :" + addcalIntent.getStringExtra("calendarname"));
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setContentText(datestringstart + " - " + datestringend + "\r\nClick here to add to your calendar.")
@@ -90,38 +91,17 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
 
     public void WidgetUpdate(Context context)
     {
-
-//        Calendar time = Calendar.getInstance();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-//
-//        time.setTimeInMillis(settings.getStartMillis());
-//        String startstring = sdf.format(time.getTime());
-//
-//        time.setTimeInMillis(settings.getEndMillis());
-//        String endstring = sdf.format(time.getTime());
-//
-//        //CharSequence widgetText = context.getString(R.string.appwidget_text);
-//        // Construct the RemoteViews object
-//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.car_calendar_widget);
-//
-//        AppWidgetManager widgetmanager = AppWidgetManager.getInstance(context);
-//        views.setTextViewText(R.id.wstarttime, startstring + "\n - \n" + endstring);
-//        widgetmanager.updateAppWidget(widgetmanager.getAppWidgetIds(new ComponentName(context, CarCalendarWidget.class)), views);
-
         Intent intent = new Intent(context, CarCalendarWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, CarCalendarWidget.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         context.sendBroadcast(intent);
-
     }
 
     public void AddStartTime()
     {
         Calendar time = Calendar.getInstance();
         time.setTime(new Date());
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
         settings.setStartMillis(time.getTimeInMillis());
         SaveCarDataJson(settings);
@@ -130,8 +110,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
     public void AddEndTime() {
         Calendar time = Calendar.getInstance();
         time.setTime(new Date());
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
         settings.setEndMillis(time.getTimeInMillis());
         SaveCarDataJson(settings);
