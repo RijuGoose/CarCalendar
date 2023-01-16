@@ -56,7 +56,7 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             addcalIntent.putExtra("starttime", settings.getStartMillis());
             addcalIntent.putExtra("endtime", settings.getEndMillis());
             addcalIntent.putExtra("calendarname", settings.getCalendarName());
-            PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
 
             Calendar time = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("MM.dd HH:mm");
