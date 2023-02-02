@@ -11,8 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.INTERNET" />
-<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> &lt;!&ndash; <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> &ndash;&gt;-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> &lt;!&ndash; <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> &ndash;&gt; -->
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
@@ -37,15 +36,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/car_calendar_widget_info" />
         </receiver>
-
-<!--        <activity-->
-<!--            android:name=".SettingsActivity"-->
-<!--            android:exported="false"-->
-<!--            android:parentActivityName=".MainActivity">-->
-<!--            <meta-data-->
-<!--                android:name="android.app.lib_name"-->
-<!--                android:value="" />-->
-<!--        </activity>-->
 
         <receiver
             android:name=".AddCalendarBroadcastReceiver"

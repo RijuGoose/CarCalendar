@@ -26,7 +26,6 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
         long start = intent.getLongExtra("starttime", 0);
         long end = intent.getLongExtra("endtime", 0);
         String calendarname = intent.getStringExtra("calendarname");
-        Log.d("btreceiver", "addcalb: " + calendarname);
 
         long calid = AddEventToCalendar(context, calendarname, start, end);
 
@@ -52,7 +51,7 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
             ContentValues values = new ContentValues();
             values.put(CalendarContract.Events.DTSTART, starttime);
             values.put(CalendarContract.Events.DTEND, endtime);
-            values.put(CalendarContract.Events.TITLE, "Autó használat");
+            values.put(CalendarContract.Events.TITLE, "Car usage");
             values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().toString());
             values.put(CalendarContract.Events.CALENDAR_ID, calID);
 

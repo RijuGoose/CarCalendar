@@ -11,6 +11,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -80,8 +81,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Driving";
             String description = "Sends a notification when the driving ends";
@@ -105,6 +104,10 @@ public class SettingsActivity extends AppCompatActivity {
         settings.setCalendarName(calname.getText().toString());
         settings.setBtDeviceName(btdevname.getText().toString());
 
+        if(getCalendarId(SettingsActivity.this, calname.getText().toString()) == -1){
+            Toast.makeText(SettingsActivity.this, "Calendar not found: \"" + calname.getText().toString() + "\"", Toast.LENGTH_LONG).show();
+        }
+
         SaveCarDataJson(settings);
         Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
     }
@@ -123,22 +126,19 @@ public class SettingsActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private long getCalendarId() {
+    private long getCalendarId(Context context, String calendarname) {
         String[] projection = new String[]{CalendarContract.Calendars._ID};
 
         String selection = CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
-        // use the same values as above:
 
-        String calendarname = settings.getCalendarName();
-
-        //String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
-        String[] selArgs = new String[]{ calendarname };
-        if (ActivityCompat.checkSelfPermission(this,
+//        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
+        String[] selArgs = new String[]{calendarname};
+        if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             return -1;
         }
 
-        Cursor cursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
+        Cursor cursor = context.getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
                 selArgs, null);
         if (cursor.moveToFirst()) {
             return cursor.getLong(0);

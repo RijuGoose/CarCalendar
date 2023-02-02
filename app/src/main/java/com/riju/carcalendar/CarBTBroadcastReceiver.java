@@ -40,7 +40,7 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
         device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
+        Log.d("btreceiver", settings.getBtDeviceName());
         if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
             Toast.makeText(context, "Driving started", Toast.LENGTH_SHORT).show();
@@ -69,8 +69,6 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             datestring = sdf.format(time.getTime());
             String datestringend = datestring;
 
-            Log.d("btreceiver", "carbtrec :" + addcalIntent.getStringExtra("calendarname"));
-
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setContentText(datestringstart + " - " + datestringend + "\r\nClick here to add to your calendar.")
@@ -80,7 +78,7 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
                     .setContentIntent(notiIntent)
                     //.addAction(R.drawable.ic_launcher_background, "Naptárhoz adás", notiIntent)
                     .setAutoCancel(true);
-//
+
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.notify(2, builder.build());
 
