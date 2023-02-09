@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    tools:context=".SettingsActivity"
+    android:orientation="vertical"
+    android:padding="50dp"
+    >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
         <EditText
             android:id="@+id/calendarname"
             android:layout_marginTop="10dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:inputType="text"
             android:hint="Calendar name"
             android:maxLines="1"
@@ -29,12 +23,17 @@
             android:id="@+id/btdevicename"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:inputType="text"
             android:hint="Bluetooth device name"
             android:maxLines="1"
             />
 
+    <CheckBox
+        android:id="@+id/cb_eventnotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send notification when the driving ended"
+    />
         <Button
             android:id="@+id/savebtn"
             android:layout_width="fill_parent"
@@ -42,5 +41,4 @@
             android:text="Save"
             android:onClick="SaveConfig"
             />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

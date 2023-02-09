@@ -10,6 +10,7 @@ public class CarDataSettings {
     private String calendarName;
     private String btDeviceName;
     private String accountType; // "com.google"
+    private Boolean showNotification;
 
     public CarDataSettings() {
 
@@ -55,4 +56,8 @@ public class CarDataSettings {
     public void setBtDeviceName(String btDeviceName) {
         this.btDeviceName = btDeviceName;
     }
+
+    public Boolean getShowNotification() { return showNotification; }
+
+    public void setShowNotification(Boolean showNotification) { this.showNotification = showNotification; }
 }

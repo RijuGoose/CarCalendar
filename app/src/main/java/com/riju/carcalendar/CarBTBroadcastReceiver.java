@@ -56,32 +56,37 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
             addcalIntent.putExtra("starttime", settings.getStartMillis());
             addcalIntent.putExtra("endtime", settings.getEndMillis());
             addcalIntent.putExtra("calendarname", settings.getCalendarName());
-            PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
 
-            Calendar time = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("MM.dd HH:mm");
+            if(settings.getShowNotification())
+            {
+                PendingIntent notiIntent = PendingIntent.getBroadcast(context, 0, addcalIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
 
-            time.setTimeInMillis(settings.getStartMillis());
-            String datestring = sdf.format(time.getTime());
-            String datestringstart = datestring;
+                Calendar time = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("MM.dd HH:mm");
 
-            time.setTimeInMillis(settings.getEndMillis());
-            datestring = sdf.format(time.getTime());
-            String datestringend = datestring;
+                time.setTimeInMillis(settings.getStartMillis());
+                String datestring = sdf.format(time.getTime());
+                String datestringstart = datestring;
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setContentText(datestringstart + " - " + datestringend + "\r\nClick here to add to your calendar.")
-                    .setContentTitle("Driving ended")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setOnlyAlertOnce(true)
-                    .setContentIntent(notiIntent)
-                    //.addAction(R.drawable.ic_launcher_background, "Naptárhoz adás", notiIntent)
-                    .setAutoCancel(true);
+                time.setTimeInMillis(settings.getEndMillis());
+                datestring = sdf.format(time.getTime());
+                String datestringend = datestring;
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.notify(2, builder.build());
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentText(datestringstart + " - " + datestringend + "\r\nClick here to add to your calendar.")
+                        .setContentTitle("Driving ended")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setOnlyAlertOnce(true)
+                        .setContentIntent(notiIntent)
+                        .setAutoCancel(true);
 
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(2, builder.build());
+            }
+            else{
+                context.sendBroadcast(addcalIntent);
+            }
         }
 
         WidgetUpdate(context);

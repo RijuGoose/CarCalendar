@@ -22,6 +22,7 @@ import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     TextView calname;
     TextView btdevname;
+    CheckBox eventnotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
                         },
                 1);
 
-        if(!shrp.contains("CarDataSettings"))
-        {
+        if (!shrp.contains("CarDataSettings")) {
             initSettings(settings);
         }
 
@@ -65,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         calname = (TextView) this.findViewById(R.id.calendarname);
         btdevname = (TextView) this.findViewById(R.id.btdevicename);
+        eventnotify = (CheckBox) this.findViewById(R.id.cb_eventnotify);
 
         SetTexts(settings);
 
@@ -77,39 +79,39 @@ public class SettingsActivity extends AppCompatActivity {
         set.setStartMillis(0);
         set.setEndMillis(0);
         set.setAccountType("com.google");
+        set.setShowNotification(true);
         SaveCarDataJson(set);
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Driving";
-            String description = "Sends a notification when the driving ends";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("btnotiend", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
+            NotificationChannel channel = new NotificationChannel("btnotiend", "Driving", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Sends a notification when the driving ends");
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
 
-    private void SetTexts(CarDataSettings set)
-    {
+    private void SetTexts(CarDataSettings set) {
         calname.setText(set.getCalendarName());
         btdevname.setText(set.getBtDeviceName());
+        eventnotify.setChecked(set.getShowNotification());
     }
 
     public void SaveConfig(View view) {
         settings.setCalendarName(calname.getText().toString());
         settings.setBtDeviceName(btdevname.getText().toString());
+        settings.setShowNotification(eventnotify.isChecked());
 
-        if(getCalendarId(SettingsActivity.this, calname.getText().toString()) == -1){
+        if (getCalendarId(SettingsActivity.this, calname.getText().toString()) == -1) {
             Toast.makeText(SettingsActivity.this, "Calendar not found: \"" + calname.getText().toString() + "\"", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            SaveCarDataJson(settings);
+            Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
 
-        SaveCarDataJson(settings);
-        Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private CarDataSettings LoadCarDataJson() {
@@ -131,7 +133,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         String selection = CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
 
-//        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
+//        String[] selArgs = new String[]{"email@gmail.com", "com.google", calendarname};
         String[] selArgs = new String[]{calendarname};
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
@@ -152,7 +154,7 @@ public class SettingsActivity extends AppCompatActivity {
                 + CalendarContract.Calendars.ACCOUNT_TYPE + " = ? ";
         // use the same values as above:
         //String[] selArgs = new String[] { calendarName, CalendarContract.ACCOUNT_TYPE_LOCAL  };
-        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google"};
+        String[] selArgs = new String[]{"email@gmail.com", "com.google"};
 
         Cursor cursor = getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, projection, selection,
                 selArgs, null);
