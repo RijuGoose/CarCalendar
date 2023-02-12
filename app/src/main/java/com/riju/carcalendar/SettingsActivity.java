@@ -87,6 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("btnotiend", "Driving", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription("Sends a notification when the driving ends");
+
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }

@@ -67,7 +67,7 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
 
         String selection = CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " = ? ";
 
-//        String[] selArgs = new String[]{"oszvaldgergo20@gmail.com", "com.google", calendarname};
+//        String[] selArgs = new String[]{"mail@mail.com", "com.google", calendarname};
         String[] selArgs = new String[]{calendarname};
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {

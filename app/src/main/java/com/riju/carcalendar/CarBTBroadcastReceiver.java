@@ -85,6 +85,17 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
                 notificationManager.notify(2, builder.build());
             }
             else{
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "btnotiend")
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentText("Driving event automatically added to your calendar.")
+                        .setContentTitle("Driving ended")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setOnlyAlertOnce(true)
+                        .setAutoCancel(true);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(1, builder.build());
+
                 context.sendBroadcast(addcalIntent);
             }
         }
