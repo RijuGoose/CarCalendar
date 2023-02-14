@@ -78,7 +78,6 @@ public class SettingsActivity extends AppCompatActivity {
         set.setCalendarName("");
         set.setStartMillis(0);
         set.setEndMillis(0);
-        set.setAccountType("com.google");
         set.setShowNotification(true);
         SaveCarDataJson(set);
     }

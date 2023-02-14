@@ -35,18 +35,21 @@ public class CarBTBroadcastReceiver extends BroadcastReceiver {
     @SuppressLint("MissingPermission")
     @Override
     public void onReceive(Context context, Intent intent) {
+
         shrp = context.getSharedPreferences("CarCalendarSettings", Context.MODE_PRIVATE);
         settings = LoadCarDataJson();
 
         String action = intent.getAction();
         device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        Log.d("btreceiver", settings.getBtDeviceName());
+
         if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
         {
             Toast.makeText(context, "Driving started", Toast.LENGTH_SHORT).show();
+
+            settings.setBtDeviceMAC(device.toString()); //AddStartTime method will save it
             AddStartTime();
         }
-        else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && device.getName().equals(settings.getBtDeviceName()))
+        else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && device.toString().equals(settings.getBtDeviceMAC())) //after disconnecting it only has access to MAC address
         {
             Toast.makeText(context, "Driving ended", Toast.LENGTH_SHORT).show();
             AddEndTime();

@@ -23,6 +23,7 @@ public class AddCalendarBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         long start = intent.getLongExtra("starttime", 0);
         long end = intent.getLongExtra("endtime", 0);
         String calendarname = intent.getStringExtra("calendarname");

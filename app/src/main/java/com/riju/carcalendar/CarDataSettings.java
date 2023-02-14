@@ -9,7 +9,7 @@ public class CarDataSettings {
     private long endMillis;
     private String calendarName;
     private String btDeviceName;
-    private String accountType; // "com.google"
+    private String btDeviceMAC;
     private Boolean showNotification;
 
     public CarDataSettings() {
@@ -41,14 +41,6 @@ public class CarDataSettings {
         this.calendarName = calendarName;
     }
 
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
-
     public String getBtDeviceName() {
         return btDeviceName;
     }
@@ -60,4 +52,8 @@ public class CarDataSettings {
     public Boolean getShowNotification() { return showNotification; }
 
     public void setShowNotification(Boolean showNotification) { this.showNotification = showNotification; }
+
+    public String getBtDeviceMAC() { return btDeviceMAC; }
+
+    public void setBtDeviceMAC(String btDeviceMAC) { this.btDeviceMAC = btDeviceMAC; }
 }
